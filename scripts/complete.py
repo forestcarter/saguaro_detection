@@ -1,3 +1,5 @@
+# Updated 5/24/18 A newer version may be available https://github.com/forestcarter/saguaro_detection
+
 import os
 import math
 import arcpy
@@ -8,19 +10,17 @@ arcpy.env.overwriteOutput = True
 locallat=(32.287117)
 locallong=(360-111.166215)
 angleDiff=10
-#abPath=(os.path.dirname(os.path.realpath(__file__)))[:-8]
 abPath=os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 #Part 1
 if arcpy.GetParameterAsText(0)=='':
     print('no params')
-    #abPath=os.path.join("c:"+os.sep, "Users","Forest", "Desktop", "saguaro_detection_git")
-    #abPath=os.path.join("f:"+os.sep,"saguaro_detection_git")
+    
     dem = os.path.join(abPath, "dem", "largedem")
     SNPBoundaries_shp = os.path.join(abPath, "snp_boundary", "SNPBoundaries.shp")
     flightpoints = os.path.join(abPath, "Ortho2011_FlightPoints", "Pima_Photos_2011.shp")
     trsfile =  os.path.join(abPath, "township_range_az", "trs.shp")
-    imageFolder = os.path.join(abPath, "PAG_2011_6inchOrtho")
+    imageFolder = os.path.join(abPath, "test.images")
     shadowwidth = 2
     shadowlength = 10
     maxelev = 1550
@@ -28,14 +28,13 @@ if arcpy.GetParameterAsText(0)=='':
     finishedFolder = os.path.join(abPath, "outputs","finished")
 
 else:
-    dem = arcpy.GetParameterAsText(0)
-    #SNPBoundaries_shp = arcpy.GetParameterAsText(1)
+    imageFolder = arcpy.GetParameterAsText(0)
     flightpoints = arcpy.GetParameterAsText(1)
     trsfile = arcpy.GetParameterAsText(2)
-    imageFolder = arcpy.GetParameterAsText(3)
-    shadowwidth = int(arcpy.GetParameterAsText(4))
-    shadowlength = int(arcpy.GetParameterAsText(5))
-    maxelev= arcpy.GetParameterAsText(6)
+    dem = arcpy.GetParameterAsText(3)
+    maxelev= arcpy.GetParameterAsText(4)
+    shadowwidth = int(arcpy.GetParameterAsText(5))
+    shadowlength = int(arcpy.GetParameterAsText(6))
     intermediateFolder = arcpy.GetParameterAsText(7)
     finishedFolder = arcpy.GetParameterAsText(8)
 
@@ -869,7 +868,7 @@ for filename in largefilelist:
 
         if morewvalue_11.mean == None or morewvalue_11.mean == 0:
             print 'no sags, moving on...'
-            fileopen = open("{}\\nosags.txt".format(finishedFolder), "a")
+            fileopen = open("{}\\nosaguaros.txt".format(finishedFolder), "a")
             fileopen.write('\n{}'.format(filename))
             fileopen.close()
 
@@ -1001,7 +1000,10 @@ for filename in largefilelist:
                     oldname = "s1{0}{2}{1}.shp".format(str(filename), txtnumst, dirst)
                     newname = "{0}{1}{2}{3}{4}Y".format(oldname[2:4], oldname[5:7], oldname[8:10], oldname[21],
                                                         oldname[23:-4])
-                    newname2 = newname.replace(".", "_")
+                    shortFileName=str(filename)[:2] + str(filename)[3:5] + str(filename)[6:8]
+                    newname1_1= "{0}{1}{2}".format(shortFileName, dirst, txtnumst[:7])
+                    newname1_2 = newname1_1.replace(".", "_")
+                    newname2 = newname1_2.replace("-", "")
                     print('newname2 is {}'.format(newname2))
 
                     check1 = Raster(finalrast_29)
